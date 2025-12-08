@@ -30,3 +30,4 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest
+          platforms: linux/amd64,linux/arm64
