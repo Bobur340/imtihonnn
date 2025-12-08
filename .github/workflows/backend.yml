@@ -27,14 +27,10 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # BIRLASHTIRILGAN QADAM: Build, Tag va Push (Bitta Qadamda)
-      - name: Build and push Multi-platform Docker image
+      - name: Build and push Multi-platform Docker image (Tavsiya etiladi)
         run: |
-          # IMAGE_NAME o'zgaruvchisi bitta uzluksiz qatorda ta'riflangan.
-          IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest
-          
-          # Ko'p qatorli buyruq bo'linishi bo'sh joylarsiz to'g'ri formatlangan
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
-            -t $IMAGE_NAME \
+            -t ${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest \
             --push \
             .
