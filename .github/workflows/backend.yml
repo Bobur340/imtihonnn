@@ -12,11 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Multi-platformali qurish uchun QEMU'ni sozlash
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      # Docker Buildx ni sozlash
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -26,8 +24,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      # BIRLASHTIRILGAN QADAM: Build, Tag va Push (Bitta Qadamda)
-      - name: Build and push Multi-platform Docker image (Tavsiya etiladi)
+      # Build va Push qadami bitta buyruqda, eng ishonchli usulda
+      - name: Build and push Multi-platform Docker image
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
