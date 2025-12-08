@@ -4,9 +4,6 @@ name: Backend Docker Build & Push
 on:
   push:
     branches: [ main ]
-  # Pull Requestlar uchun ham ishga tushirish mumkin:
-  # pull_request:
-  #   branches: [ main ]
 
 jobs:
   build_and_push:
@@ -17,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Multi-platformali qurish uchun QEMU'ni sozlash (ARM va AMD64)
+      # 2. Multi-platformali qurish uchun QEMU'ni sozlash
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -34,13 +31,14 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
           
       # 5. Docker imijini qurish va joylash (push)
-      # Ko'p qatorli buyruqdan foydalanilgan, bu oldingi xatolikni bartaraf etadi.
+      # Qatorlar xatosini bartaraf etish uchun 'run: |' va uzluksiz o'zgaruvchi ta'rifi ishlatilgan.
       - name: Build and push Docker image
-        # 'run: |' ko'p qatorli buyruqlarni ishlatish uchun
         run: |
-          # Loyiha nomini o'rnating. 'cyber-shop-pro-backend' so'zini loyihangiz nomi bilan almashtiring.
+          # IMAGE_NAME o'zgaruvchisi bitta uzluksiz qatorda ta'riflangan.
+          # "cyber-shop-pro-backend" ni o'z loyiha nomingiz bilan almashtiring!
           IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest
           
+          # docker buildx buyrug'i (ko'p qatorli usulda)
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             -t $IMAGE_NAME \
