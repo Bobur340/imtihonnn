@@ -25,9 +25,4 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest
-          platforms: linux/amd64,linux/arm64
+        run: docker buildx build -t ${{ secrets.DOCKER_HUB_USERNAME }}/cyber-shop-pro-backend:latest . --push --platform linux/amd64,linux/arm64
