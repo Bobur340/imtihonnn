@@ -6,7 +6,7 @@ export class ProductsController {
   constructor(private service: ProductsService) {}
 
   @Post()
-  create(@Body() dto) {
+  create(@Body() dto: any) {
     return this.service.create(dto);
   }
 

@@ -1,27 +1,26 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Headers } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 
-@Controller('order')
+@Controller('orders') // endi plural, 404 oldini olish uchun
 export class OrdersController {
   constructor(private service: OrdersService) {}
 
   @Post('create')
-  create(@Body() body) {
-    return this.service.createOrder(body.items, body.totalPrice);
-  }
-
-  @Post('address')
-  address(@Body() body) {
-    return this.service.addAddress(body.orderId, body);
-  }
-
-  @Post('shipping')
-  shipping(@Body() body) {
-    return this.service.addShipping(body.orderId, { method: body.method });
-  }
-
-  @Post('payment')
-  payment(@Body() body) {
-    return this.service.addPayment(body.orderId, body.method);
+  async create(
+    @Headers('cartid') cartId: string,
+    @Body() body: { 
+      address: { fullName: string; phone: string; address: string };
+      paymentMethod: string;
+      shippingMethod: string;
+      promoCode?: string;
+    }
+  ) {
+    return this.service.createOrder(
+      cartId,
+      body.address,
+      body.paymentMethod,
+      body.shippingMethod,
+      body.promoCode,
+    );
   }
 }

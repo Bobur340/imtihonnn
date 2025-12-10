@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brand } from './entities/brand.entity';
 import { Repository } from 'typeorm';
+import { Brand } from './entities/brand.entity';
 
 @Injectable()
 export class BrandsService {
@@ -10,13 +10,15 @@ export class BrandsService {
     private repo: Repository<Brand>,
   ) {}
 
-  create(dto) {
-    const brand = this.repo.create(dto);
+  create(name: string) {
+    const brand = this.repo.create({ name });
     return this.repo.save(brand);
   }
 
   findAll() {
-    return this.repo.find({ relations: ['products'] });
+    return this.repo.find({
+      relations: ['products'],
+    });
   }
 
   findOne(id: number) {

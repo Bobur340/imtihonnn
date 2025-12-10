@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-import { Brand } from '../../brands/entities/brand.entity';
 import { Category } from '../../categories/entities/category.entity';
-import { ProductVariant } from 'src/products/product-variant.entity';
-import { ProductImage } from 'src/products/product-image.entity';
+import { Brand } from '../../brands/entities/brand.entity';
+import { ProductVariant } from './product-variant.entity';
+import { ProductImage } from './product-image.entity';
 
 @Entity()
 export class Product {
@@ -10,17 +10,23 @@ export class Product {
   id: number;
 
   @Column()
-  name: string;
+  title: string;
 
-  @ManyToOne(() => Brand, (brand) => brand.products, { onDelete: 'SET NULL' })
-  brand: Brand;
+  @Column()
+  price: number;
 
-  @ManyToOne(() => Category, (category) => category.products, { onDelete: 'SET NULL' })
+  @ManyToOne(() => Category, (cat) => cat.products)
   category: Category;
 
-  @OneToMany(() => ProductVariant, (variant) => variant.product)
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  brand: Brand;
+
+  @OneToMany(() => ProductVariant, (v) => v.product, { cascade: true })
   variants: ProductVariant[];
 
-  @OneToMany(() => ProductImage, (image) => image.product)
+  @OneToMany(() => ProductImage, (img) => img.product, { cascade: true })
   images: ProductImage[];
+
+  @Column({ type: 'jsonb', nullable: true })
+  specs: any;  // Texnik ma’lumotlar (jadval ko‘rinishida)
 }

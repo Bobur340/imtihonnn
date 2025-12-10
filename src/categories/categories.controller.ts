@@ -1,9 +1,14 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private service: CategoriesService) {}
+
+  @Post()
+  create(@Body('name') name: string) {
+    return this.service.create(name);
+  }
 
   @Get()
   findAll() {
@@ -12,11 +17,6 @@ export class CategoriesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
-  }
-
-  @Post()
-  create(@Body() body: { name: string; description?: string }) {
-    return this.service.create(body);
+    return this.service.findOne(+id);
   }
 }

@@ -7,19 +7,25 @@ import { Category } from './entities/category.entity';
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private readonly repo: Repository<Category>,
+    private repo: Repository<Category>,
   ) {}
 
+  create(name: string) {
+    const cat = this.repo.create({ name });
+    return this.repo.save(cat);
+  }
+
   findAll() {
-    return this.repo.find();
+    return this.repo.find({
+      relations: ['products'],
+    });
   }
 
-  findOne(id: string) {
-    return this.repo.findOne({ where: { id } });
-  }
-
-  create(dto: Partial<Category>) {
-    const c = this.repo.create(dto);
-    return this.repo.save(c);
+  findOne(id: number) {
+    return this.repo
+      .createQueryBuilder('category')
+      .leftJoinAndSelect('category.products', 'products')
+      .where('category.id = :id', { id })
+      .getOne();
   }
 }

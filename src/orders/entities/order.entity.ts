@@ -1,20 +1,34 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { OrderItem } from '../order-item.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Order {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column("jsonb", { nullable: true })
+  address: {
+    fullName: string;
+    phone: string;
+    address: string;
+  };
+
+  @Column("jsonb", { nullable: true })
+  shipping: {
+    method: string;
+  };
+
+  @Column("jsonb", { nullable: true })
+  payment: {
+    method: string;
+    status: string;
+  };
+
+  @Column("jsonb", { default: [] })
+  items: {
+    productId: string;
+    qty: number;
+  }[];
 
   @Column()
-  address: string;
-
-  @Column()
-  shipping: string;
-
-  @Column()
-  payment: string;
-
-  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
-  items: OrderItem[];
+  totalPrice: number;
 }

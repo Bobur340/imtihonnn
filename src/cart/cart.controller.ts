@@ -1,17 +1,23 @@
-import { Controller, Get, Post, Body, Headers } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Inject, forwardRef } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { OrdersService } from 'src/orders/orders.service';
 
 @Controller('cart')
 export class CartController {
-  constructor(private service: CartService) {}
+  constructor(
+    private cartService: CartService,
+    @Inject(forwardRef(() => OrdersService))
+    private ordersService: OrdersService, 
+  ) {}
 
-  @Get()
-  getCart(@Headers('cartid') cartId: string) {
-    return this.service.getCart(cartId);
+  @Post('add-item')
+  async addItem(@Body() body: { cartId: string; productId: string }) {
+    return this.cartService.addToCart(body.cartId, body.productId);
   }
 
-  @Post('add')
-  add(@Headers('cartid') cartId: string, @Body() body: any) {
-    return this.service.addToCart(cartId, body.productId);
+  // Yangi GET endpoint
+  @Get(':id')
+  async getCart(@Param('id') cartId: string) {
+    return this.cartService.getCart(cartId);
   }
 }

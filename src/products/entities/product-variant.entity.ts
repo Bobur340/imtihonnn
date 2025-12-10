@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Product } from './entities/product.entity';
+import { Product } from './product.entity';
 
 @Entity()
 export class ProductVariant {
@@ -11,6 +11,9 @@ export class ProductVariant {
 
   @Column()
   color: string;
+
+  @Column()
+  quantity: number;
 
   @ManyToOne(() => Product, (product) => product.variants, { onDelete: 'CASCADE' })
   product: Product;

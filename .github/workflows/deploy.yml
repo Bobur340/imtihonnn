@@ -1,0 +1,36 @@
+name: Backend Deploy
+
+on:
+  push:
+    branches:
+      - main   # yoki sizning asosiy branch nomi
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Node.js versiyasi, o'zgartiring
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+
+    - name: Deploy to server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+        scp -i key.pem -r ./ user@$HOST:/path/to/your/server
+        ssh -i key.pem user@$HOST "cd /path/to/your/server && npm install && pm2 restart all"

@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+import { PromoCodeModule } from './promo/promo-code.module';
 import { CategoriesModule } from './categories/categories.module';
 import { BrandsModule } from './brands/brands.module';
 import { ProductsModule } from './products/products.module';
@@ -13,16 +14,20 @@ import { OrdersModule } from './orders/orders.module';
 import { Category } from './categories/entities/category.entity';
 import { Brand } from './brands/entities/brand.entity';
 import { Product } from './products/entities/product.entity';
-import { ProductImage } from './products/product-image.entity';
-import { ProductVariant } from './products/product-variant.entity';
+import { ProductImage } from './products/entities/product-image.entity';
+import { ProductVariant } from './products/entities/product-variant.entity';
 import { Cart } from './cart/entities/cart.entity';
-import { CartItem } from './cart/cart-item.entity';
-import { Order } from './orders/order.entity';
-import { OrderItem } from './orders/order-item.entity';
+import { CartItem } from './cart/entities/cart-item.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
+import { PromoCode } from './promo/entities/promo-code.entity';
+
+// SERVICES (seed uchun kerak)
+import { CategoriesService } from './categories/categories.service';
+import { BrandsService } from './brands/brands.service';
 
 @Module({
   imports: [
-    // PostgreSQL connection
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST || 'localhost',
@@ -40,17 +45,41 @@ import { OrderItem } from './orders/order-item.entity';
         CartItem,
         Order,
         OrderItem,
+        PromoCode,
       ],
       synchronize: true,
       logging: false,
     }),
 
-    // ACTIVE MODULES
     CategoriesModule,
     BrandsModule,
     ProductsModule,
     CartModule,
     OrdersModule,
+    PromoCodeModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements OnApplicationBootstrap {
+  constructor(
+    private categoriesService: CategoriesService,
+    private brandsService: BrandsService,
+  ) {}
+
+  async onApplicationBootstrap() {
+    console.log('🌱 Seeding default data...');
+
+    // Default Categories
+    const defaultCategories = ['Apple', 'Nokia', 'Xiaomi'];
+    for (const name of defaultCategories) {
+      await this.categoriesService.create(name).catch(() => {});
+    }
+
+    // Default Brands
+    const defaultBrands = ['Apple', 'Samsung', 'Xiaomi', 'Poco', 'Honor'];
+    for (const name of defaultBrands) {
+      await this.brandsService.create(name).catch(() => {});
+    }
+
+    console.log('✅ Seed completed');
+  }
+}

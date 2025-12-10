@@ -1,13 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { CartItem } from './cart-item.entity';
 
 @Entity()
 export class Cart {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column("jsonb", { default: [] })
-  items: {
-    productId: string;
-    qty: number;
-  }[];
+  @OneToMany(() => CartItem, item => item.cart, { cascade: true })
+  items: CartItem[];
 }
